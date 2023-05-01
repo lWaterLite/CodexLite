@@ -1,0 +1,704 @@
+﻿<Page x:Class="CodexLite.Apps.Todo"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CodexLite.Apps"
+      mc:Ignorable="d" 
+      d:DesignHeight="690" d:DesignWidth="1210"
+      Title="Todo">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Thems/CLButton.xaml"/>
+                <ResourceDictionary Source="../Thems/CLScrollViewer.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <SolidColorBrush x:Key="List.Item.MouseOver.Background" Color="#f5f5f5"/>
+            <SolidColorBrush x:Key="List.Item.Selected.Background" Color="#ecf5ff"/>
+            <SolidColorBrush x:Key="List.Item.Selected.Foreground" Color="#409eff"/>
+            
+            <Style TargetType="ScrollViewer" BasedOn="{StaticResource ScrollViewer.ListBox}"/>
+            
+            <local:EventStartDateConverter x:Key="EventStartDateConverter"/>
+            <local:EventEndDateDisplayConverter x:Key="EventEndDateDisplayConverter"/>
+            <local:EventEndDateDatabaseConverter x:Key="EventEndDateDatabaseConverter"/>
+            
+            <Style TargetType="Border" x:Key="RightCard">
+                <Setter Property="Padding" Value="24 16"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="5"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect Color="#C0C4CC" Opacity="1" ShadowDepth="0" BlurRadius="12"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="ListBoxItem" x:Key="GroupListBoxItem">
+                <Setter Property="Height" Value="45"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border x:Name="Border" Background="Transparent" BorderThickness="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                                <ContentPresenter x:Name="ContentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  RecognizesAccessKey="True"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource List.Item.MouseOver.Background}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource List.Item.Selected.Background}"/>
+                                    <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{StaticResource List.Item.Selected.Foreground}"/>
+                                    <Setter TargetName="ContentPresenter" Property="TextElement.FontWeight" Value="Bold"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <Style TargetType="ListBoxItem" x:Key="EventListBoxItem">
+                <Setter Property="Height" Value="60"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border x:Name="Border" Background="White" 
+                                    Margin="24 8 24 0" CornerRadius="3">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#C0C4CC" Opacity="1" ShadowDepth="0" BlurRadius="12"/>
+                                </Border.Effect>
+                                <ContentPresenter x:Name="ContentPresenter" Focusable="False" 
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                                  Height="Auto" Width="Auto"
+                                                  RecognizesAccessKey="True"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource List.Item.MouseOver.Background}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource List.Item.Selected.Background}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ImportantToolbarTemplate -->
+            <DataTemplate x:Key="ImportantToolbarTemplate">
+                <Grid Row="0" Margin="24 16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Column="0">
+                        <Image Source="pack://application:,,,/Assets/toolbarStar.png" HorizontalAlignment="Left" 
+                               Height="24" Width="24" Stretch="Uniform" Margin="0,12,0,12"/>
+                    </Grid>
+                    <Grid Column="1">
+                        <TextBlock Text="重要" VerticalAlignment="Center" FontSize="20" Foreground="#409EFF" FontWeight="SemiBold"/>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
+            
+            <!-- TaskToolbarTemplate -->
+            <DataTemplate x:Key="TaskToolbarTemplate">
+                <Grid Row="0" Margin="24 16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Column="0">
+                        <Image Source="pack://application:,,,/Assets/task.png" HorizontalAlignment="Left" 
+                               Height="24" Width="24" Stretch="Uniform" Margin="0,12,0,12"/>
+                    </Grid>
+                    <Grid Column="1">
+                        <TextBlock Text="任务" VerticalAlignment="Center" FontSize="20" Foreground="#409EFF" FontWeight="SemiBold"/>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
+            
+            <!-- GroupToolbarTemplate -->
+            <DataTemplate x:Key="GroupToolbarTemplate">
+                <Grid Row="0" Margin="24 16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Column="0">
+                        <Image Source="pack://application:,,,/Assets/toolbarListItem.png" HorizontalAlignment="Left" 
+                               Height="24" Width="24" Stretch="Uniform" Margin="0,12,0,12"/>
+                    </Grid>
+                    <Grid Column="1">
+                        <TextBlock VerticalAlignment="Center" FontSize="20" Foreground="#409EFF" FontWeight="SemiBold">
+                            <TextBlock.Text>
+                                <Binding Source="{x:Reference GroupListBox}" Path="SelectedItem.(local:GroupModel.GroupName)" />
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
+            
+            <Storyboard x:Key="RightBorderExtendStoryboard">
+                <DoubleAnimation Storyboard.TargetName="RightBorder" Storyboard.TargetProperty="Width" To="420" Duration="0:0:0.1"/>
+            </Storyboard>
+            
+            <Storyboard x:Key="RightBorderNarrowStoryboard">
+                <DoubleAnimation Storyboard.TargetName="RightBorder" Storyboard.TargetProperty="Width" To="0" Duration="0:0:0.1"/>
+            </Storyboard>
+            
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <Border Background="Transparent" CornerRadius="0 0 20 0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="290"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="90"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="45"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Row="0" HorizontalAlignment="Left">
+                        <Image Source="pack://application:,,,/Assets/list.png" Stretch="Uniform" Height="20" Margin="20 0 0 0"/>
+                    </Grid>
+                    <Grid Row="1">
+                        <ListBox BorderThickness="0" Margin="0 0 0 0"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                                 ScrollViewer.CanContentScroll="False"
+                                 SelectionMode="Single"
+                                 SelectionChanged="UpperListBoxSelected_OnSelectionChanged"
+                                 x:Name="UpperListBox">
+                            
+                            <!-- 重要 -->
+                            <ListBoxItem DataContext="0" Style="{StaticResource GroupListBoxItem}">
+                                <ListBoxItem.ContentTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="24 12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Image Grid.Column="0" Source="pack://application:,,,/Assets/stared.png" Height="20" Width="20"/>
+                                            <Grid Column="1">
+                                                <TextBlock Text="重要" VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Left" Margin="16 0 0 0"
+                                                           FontSize="14"/>
+                                            </Grid>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBoxItem.ContentTemplate>
+                            </ListBoxItem>
+
+                            <!-- 任务 -->
+                            <ListBoxItem DataContext="1" Style="{StaticResource GroupListBoxItem}">
+                                <ListBoxItem.ContentTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="24 12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Image Grid.Column="0" Source="pack://application:,,,/Assets/task.png" Height="20"/>
+                                            <Grid Column="1">
+                                                <Rectangle Fill="Transparent"/>
+                                                <TextBlock Text="任务" VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Left" Margin="16 0 0 0"
+                                                           FontSize="14"/>
+                                            </Grid>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBoxItem.ContentTemplate>
+                            </ListBoxItem>
+                        </ListBox>
+                    </Grid>
+
+                    <Grid Row="2">
+                        <Separator Background="#e1dfdd" Margin="16 9 16 9"/>
+                    </Grid>
+
+                    <Grid Row="3">
+                        <Grid Margin="24 12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Column="0">
+                                <Button Width="20" Height="20" Margin="0" 
+                                        Style="{StaticResource Button.Default}"
+                                        Click="InsertNewGroup_OnClick">
+                                    <Button.Content>
+                                        <Image Source="pack://application:,,,/Assets/add.png" Stretch="Uniform" Height="20"/>
+                                    </Button.Content>
+                                </Button>
+                            </Grid>
+                            <Grid Column="1">
+                                <TextBox BorderThickness="0" x:Name="NewGroupTextBox" KeyDown="InsertNewGroup_OnKeyDown">
+                                    <TextBox.ContextMenu>
+                                        <ContextMenu Visibility="Collapsed"/>
+                                    </TextBox.ContextMenu>
+                                    <TextBox.Resources>
+                                        <VisualBrush x:Key="HelpBrushOnBlur" AlignmentX="Left" Stretch="None">
+                                            <VisualBrush.Visual>
+                                                <TextBlock Text="新建列表" Foreground="#C0C4CC" FontSize="14"/>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                        <VisualBrush x:Key="HelpBrushOffBlur" AlignmentX="Left" Stretch="None">
+                                            <VisualBrush.Visual>
+                                                <TextBlock Text="新建列表" Foreground="#409EFF" FontSize="14"/>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </TextBox.Resources>
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="Margin" Value="16 0 0 0"/>
+                                            <Setter Property="Height" Value="20"/>
+                                            <Setter Property="FontSize" Value="14"/>
+                                            <Style.Triggers>
+                                                <MultiTrigger>
+                                                    <MultiTrigger.Conditions>
+                                                        <Condition Property="Text" Value=""/>
+                                                        <Condition Property="IsFocused" Value="True"/>
+                                                    </MultiTrigger.Conditions>
+                                                    <Setter Property="Background" Value="{StaticResource HelpBrushOnBlur}" />
+                                                </MultiTrigger>
+                                                <MultiTrigger>
+                                                    <MultiTrigger.Conditions>
+                                                        <Condition Property="Text" Value=""/>
+                                                        <Condition Property="IsFocused" Value="False"/>
+                                                    </MultiTrigger.Conditions>
+                                                    <Setter Property="Background" Value="{StaticResource HelpBrushOffBlur}"/>
+                                                </MultiTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <Grid Row="4">
+                        <ListBox x:Name="GroupListBox" BorderThickness="0" 
+                                 SelectionMode="Single" ItemContainerStyle="{StaticResource GroupListBoxItem}"
+                                 SelectionChanged="GroupIndexListBoxSelected_OnSelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:GroupModel}">
+                                    <Grid Margin="24 12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="20" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Image Grid.Column="0" Source="pack://application:,,,/Assets/list_item.png" Height="20" Width="20"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding GroupName}" 
+                                                   VerticalAlignment="Center" 
+                                                   HorizontalAlignment="Left" Margin="16 0 0 0"
+                                                   FontSize="14"/>
+                                        <Grid Column="2" HorizontalAlignment="Right">
+                                            <Button Height="20" Width="20" DataContext="{Binding}"
+                                                    Style="{StaticResource Button.Default}" Padding="0"
+                                                    Click="DeleteGroup_OnClick">
+                                                <Button.Content>
+                                                    <Image Source="pack://application:,,,/Assets/delete.png" Stretch="Uniform" Height="20"/>
+                                                </Button.Content>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Grid>
+
+                <Border Grid.Column="1" Background="#faf9f8">
+                    <Grid Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="80"/>
+                            <RowDefinition Height="52"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="8"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0">
+                            <ContentControl x:Name="EventToolbarContentControl"/>
+                        </Border>
+                        
+                        <Border Grid.Row="1" Margin="24 0" Background="White" CornerRadius="3" x:Name="NewEventBorder"
+                                Visibility="Hidden">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#C0C4CC" Opacity="1" ShadowDepth="0" BlurRadius="12"/>
+                            </Border.Effect>
+                            <Grid Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Grid Column="0" Margin="16 0 0 0">
+                                    <Image Source="pack://application:,,,/Assets/unseleted.png" Width="20" Stretch="Uniform"/>
+                                </Grid>
+                                <Grid Column="1">
+                                    <TextBox BorderThickness="0" Foreground="Black" x:Name="NewEventTextBox" KeyDown="InsertNewEvent_OnKeyDown">
+                                        <TextBox.ContextMenu>
+                                            <ContextMenu Visibility="Collapsed"/>
+                                        </TextBox.ContextMenu>
+                                        <TextBox.Resources>
+                                            <VisualBrush x:Key="HelpBrushOnBlur" AlignmentX="Left" Stretch="None">
+                                                <VisualBrush.Visual>
+                                                    <TextBlock Text="添加事件" Foreground="#C0C4CC" FontSize="14"/>
+                                                </VisualBrush.Visual>
+                                            </VisualBrush>
+                                            <VisualBrush x:Key="HelpBrushOffBlur" AlignmentX="Left" Stretch="None">
+                                                <VisualBrush.Visual>
+                                                    <TextBlock Text="添加事件" Foreground="#409EFF" FontSize="14"/>
+                                                </VisualBrush.Visual>
+                                            </VisualBrush>
+                                        </TextBox.Resources>
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="Margin" Value="16 0 0 0"/>
+                                                <Setter Property="Height" Value="20"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                                <Style.Triggers>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="Text" Value=""/>
+                                                            <Condition Property="IsFocused" Value="True"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource HelpBrushOnBlur}"/>
+                                                    </MultiTrigger>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="Text" Value=""/>
+                                                            <Condition Property="IsFocused" Value="False"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource HelpBrushOffBlur}"/>
+                                                    </MultiTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+                                </Grid>
+                                <Grid Column="2" Margin="0 0 8 0">
+                                    <Button Style="{DynamicResource Button.Primary}"
+                                            Height="30" Padding="7 0 7 0" FontSize="12"
+                                            x:Name="NewEventButton" Click="InsertNewEvent_OnClick">添加</Button>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                        
+                        <Border Grid.Row="2">
+                            <Grid>
+                                <ListBox BorderThickness="0" Background="Transparent" x:Name="EventListBox" 
+                                         ItemContainerStyle="{StaticResource EventListBoxItem}"
+                                         SelectionChanged="EventListBoxSelected_OnSelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type local:EventModel}">
+                                            <Border Background="Transparent" VerticalAlignment="Center">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    
+                                                    <Grid Column="0" Width="Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                        <Button Click="ChangeEventCompletion_OnClick">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="Transparent" Width="Auto" Height="Auto">
+                                                                        <Image Source="pack://application:,,,/Assets/unseleted.png" x:Name="EventSelectImage"
+                                                                               Width="20" Stretch="Uniform" Margin="16 0 16 0"/>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <MultiDataTrigger>
+                                                                            <MultiDataTrigger.Conditions>
+                                                                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsMouseOver}" Value="True"/>
+                                                                            </MultiDataTrigger.Conditions>
+                                                                            <Setter TargetName="EventSelectImage" Property="Source" Value="pack://application:,,,/Assets/selected.png"/>
+                                                                        </MultiDataTrigger>
+                                                                        <DataTrigger Binding="{Binding EventCompletion}" Value="1">
+                                                                            <Setter TargetName="EventSelectImage" Property="Source" Value="pack://application:,,,/Assets/selectedFill.png"/>
+                                                                        </DataTrigger>
+                                                                        <MultiDataTrigger>
+                                                                            <MultiDataTrigger.Conditions>
+                                                                                <Condition Binding="{Binding EventCompletion}" Value="1"/>
+                                                                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsMouseOver}" Value="True"/>
+                                                                            </MultiDataTrigger.Conditions>
+                                                                            <Setter TargetName="EventSelectImage" Property="Source" Value="pack://application:,,,/Assets/selected.png"/>
+                                                                        </MultiDataTrigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </Grid>
+                                                    <Grid Column="1" VerticalAlignment="Center">
+                                                        <TextBlock FontSize="14" Text="{Binding Path=EventBrief, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                    </Grid>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+                
+                <Border Grid.Column="2" Background="#faf9f8" Width="0" Padding="24 16 16 16" CornerRadius="0 0 20 0"
+                        BorderThickness="1 0 0 0" BorderBrush="#C0C4CC" x:Name="RightBorder">
+                    <Grid x:Name="RightGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Border Grid.Row="0">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource RightCard}">
+                                    <Setter Property="Margin" Value="0 0 0 8"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border>
+                                    <Button Click="ChangeEventCompletion_OnClick" DataContext="{Binding }">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="Transparent" Width="Auto" Height="Auto">
+                                                    <Image Source="pack://application:,,,/Assets/unseleted.png" x:Name="RightGridBriefImage"
+                                                           Width="20" Stretch="Uniform" Margin="0 0 16 0"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding EventCompletion}" Value="0"/>
+                                                            <Condition Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsMouseOver}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter TargetName="RightGridBriefImage" Property="Source" Value="pack://application:,,,/Assets/selected.png"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding EventCompletion}" Value="1">
+                                                        <Setter TargetName="RightGridBriefImage" Property="Source" Value="pack://application:,,,/Assets/selectedFill.png"/>
+                                                    </DataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding EventCompletion}" Value="1"/>
+                                                            <Condition Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsMouseOver}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter TargetName="RightGridBriefImage" Property="Source" Value="pack://application:,,,/Assets/selected.png"/>
+                                                    </MultiDataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </Border>
+                                <Border Grid.Column="1" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="True">
+                                                    <Setter Property="BorderBrush" Value="White"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#e1dfdd"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBox BorderThickness="0" Background="White" Text="{Binding Path=EventBrief, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"
+                                             FontSize="16" FontWeight="Medium">
+                                    </TextBox>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        
+                        <Border Grid.Row="1">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource RightCard}">
+                                    <Setter Property="Margin" Value="0 0 0 8"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border Grid.Column="0">
+                                    <Image Source="pack://application:,,,/Assets/calender.png" Height="20" Width="20" Margin="0 0 16 0"/>
+                                </Border>
+                                <Border Grid.Column="1">
+                                    <DatePicker BorderThickness="0" FontSize="14" 
+                                                SelectedDate="{Binding Path=EventEndDate, Mode=TwoWay}">
+                                        <DatePicker.Resources>
+                                            <Style TargetType="{x:Type DatePickerTextBox}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="DatePickerTextBox">
+                                                            <Border x:Name="Border" BorderThickness="1">
+                                                                <TextBox x:Name="PART_TextBox" BorderThickness="0"
+                                                                         Text="{Binding RelativeSource={RelativeSource AncestorType=DatePicker},
+                                                                         Converter={StaticResource EventEndDateDisplayConverter}, 
+                                                                         Path=SelectedDate, Mode=OneWay}"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsEnabled" Value="True">
+                                                                    <Setter TargetName="Border" Property="BorderBrush" Value="White"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="Border" Property="BorderBrush" Value="#E1DFDD"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </DatePicker.Resources>
+                                    </DatePicker>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        
+                        <Border Grid.Row="2">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource RightCard}">
+                                    <Setter Property="Margin" Value="0 0 0 8"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#f5f5f5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border Grid.Column="0" >
+                                    <Image Source="pack://application:,,,/Assets/remark.png" Height="20" Width="20" Stretch="Uniform" Margin="0 0 16 0"/>
+                                </Border>
+                                <Border Grid.Column="1" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="True">
+                                                    <Setter Property="BorderBrush" Value="White"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#e1dfdd"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBox Height="Auto" BorderThickness="0" FontSize="14" TextWrapping="Wrap" 
+                                             Text="{Binding Path=EventRemark}" AcceptsReturn="True"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        
+                        <Border Grid.Row="4" Margin="0 0 0 8">
+                            <Separator/>
+                        </Border>
+                        
+                        <Border Grid.Row="5" Style="{StaticResource RightCard}" Margin="0 0 0 8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border Grid.Column="0" HorizontalAlignment="Left" Padding="20 0 0 0">
+                                    <Button Style="{StaticResource Button.Primary}" Content="确认"
+                                            Click="UpdateEventModel_OnClick"/>
+                                </Border>
+                                <Border Grid.Column="1" HorizontalAlignment="Right" Padding="0 0 20 0">
+                                    <Button Style="{StaticResource Button.Default}" Content="取消" BorderThickness="1"
+                                            Click="AbandonChange_OnClick"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        
+                        <Border Grid.Row="6" Style="{StaticResource RightCard}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border Grid.Column="0">
+                                    <Button Style="{StaticResource Button.Default}"
+                                            Click="NarrowRightBorder_OnClick">
+                                        <Button.Content>
+                                            <Image Source="pack://application:,,,/Assets/narrow.png" Height="20"/>
+                                        </Button.Content>
+                                    </Button>
+                                </Border>
+                                
+                                <Border Grid.Column="1">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Text="{Binding Path=EventStartDate, Converter={StaticResource EventStartDateConverter}, Mode=OneWay}"/>
+                                </Border>
+                                
+                                <Border Grid.Column="2">
+                                    <Button Style="{StaticResource Button.Default}"
+                                            Click="DeleteEventModel_OnClick">
+                                        <Button.Content>
+                                            <Image Source="pack://application:,,,/Assets/delete.png" Height="20"/>
+                                        </Button.Content>
+                                    </Button>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
