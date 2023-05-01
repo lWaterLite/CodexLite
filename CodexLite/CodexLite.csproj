@@ -191,6 +191,7 @@
     <Resource Include="Assets\todo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\github.png" />
     <Content Include="Controls\.gitkeep" />
     <Resource Include="Assets\add.png" />
     <Resource Include="Assets\delete_item.png" />

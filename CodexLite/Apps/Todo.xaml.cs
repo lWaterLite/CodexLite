@@ -1,37 +1,22 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Button = System.Windows.Forms.Button;
-using Control = System.Windows.Controls.Control;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using ListBox = System.Windows.Controls.ListBox;
-using MessageBox = System.Windows.Forms.MessageBox;
-using TextBox = System.Windows.Forms.TextBox;
 
 namespace CodexLite.Apps
 {
     /// <summary>
     /// Todo.xaml 的交互逻辑
     /// </summary>
-    public partial class Todo : Page
+    public partial class Todo
     {
         private static SqliteLink _sqliteLink;
         private static BindingSource _groupModelBindingSource;

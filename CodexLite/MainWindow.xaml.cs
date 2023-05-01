@@ -1,55 +1,46 @@
 ﻿using CodexLite.Apps;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CodexLite
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
+        private readonly Home _home;
         public MainWindow()
         {
             InitializeComponent();
-            Navi.Content = new Home();
+            _home = new Home();
+            Navi.Content = _home;
+            HomeButton.IsEnabled = false;
         }
 
         private void TodoButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Navi.Content.GetType() != typeof(Todo))
-            {
-                Navi.Content = new Todo();
-            }
+            Navi.Content = new Todo();
+            HomeButton.IsEnabled = true;
+            TodoButton.IsEnabled = false;
+            FormatButton.IsEnabled = true;
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Navi.Content.GetType() != typeof(Home))
-            {
-                Navi.Content = new Home();
-            }
+            Navi.Content = _home;
+            HomeButton.IsEnabled = false;
+            TodoButton.IsEnabled = true;
+            FormatButton.IsEnabled = true;
         }
 
         private void FormatButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Navi.Content.GetType() != typeof(Format))
-            {
-                Navi.Content = new Format();
-            }
+            Navi.Content = new Format();
+            HomeButton.IsEnabled = true;
+            TodoButton.IsEnabled = true;
+            FormatButton.IsEnabled = false;
         }
 
         private void TopBarCloseButton_Click(object sender, RoutedEventArgs e)
@@ -67,6 +58,11 @@ namespace CodexLite
             {
                 DragMove();
             }
+        }
+
+        private void GithubBrowser_OnClick(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/lWaterLite");
         }
 
         private void TopBarMinimizeButton_Click(object sender, RoutedEventArgs e)

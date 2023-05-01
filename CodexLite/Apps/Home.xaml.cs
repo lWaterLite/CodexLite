@@ -1,36 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using OpenHardwareMonitor.Hardware;
-using Timer = System.Timers.Timer;
 
 namespace CodexLite.Apps
 {
     /// <summary>
     /// Page1.xaml 的交互逻辑
     /// </summary>
-    public partial class Home : Page
+    public partial class Home
     {
-        private Dictionary<HardwareType, BindingSource> _hardwareNodes;
-        private static BindingSource _GpuNodes;
+        private static DispatcherTimer _updateTimer;
+        private readonly Dictionary<HardwareType, BindingSource> _hardwareNodes;
+        private static BindingSource _gpuNodes;
 
         public Home()
         {
@@ -39,13 +28,22 @@ namespace CodexLite.Apps
             Computer computer = InitializeComputer();
             _hardwareNodes = InitializeHardwareNodes(computer);
             InitializeSensorNodes(computer,_hardwareNodes);
-            _GpuNodes = GpuHandler(_hardwareNodes);
+            _gpuNodes = GpuHandler(_hardwareNodes);
+            computer.Close();
             
             CpuTreeView.ItemsSource = _hardwareNodes[HardwareType.CPU];
-            GpuTreeView.ItemsSource = _GpuNodes;
+            GpuTreeView.ItemsSource = _gpuNodes;
+            RamTreeView.ItemsSource = _hardwareNodes[HardwareType.RAM];
+            HddTreeView.ItemsSource = _hardwareNodes[HardwareType.HDD];
 
-            var updateTimer = InitializeTimer();
-            updateTimer.Start();
+            _updateTimer = InitializeTimer();
+            // Dispatcher.InvokeAsync(new Action(delegate { updateTimer.Start(); }));
+            _updateTimer.Start();
+        }
+
+        ~Home()
+        {
+            _updateTimer.Stop();
         }
 
         private static Computer InitializeComputer()
@@ -57,9 +55,17 @@ namespace CodexLite.Apps
                 GPUEnabled = true,
                 MainboardEnabled = true,
                 RAMEnabled = true,
+                HDDEnabled = true
             };
+            try
+            {
+                computer.Open();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
             computer.Accept(updateVisitor);
-            computer.Open();
             return computer;
         }
 
@@ -161,11 +167,12 @@ namespace CodexLite.Apps
         private void SensorInfoUpdater(Dictionary<HardwareType, BindingSource> hardwareNodes)
         {
             Computer computer = InitializeComputer();
+            if (computer == null) return;
 
             foreach (var hardware in computer.Hardware)
             {
-                var firstNode = hardwareNodes[hardware.HardwareType].DataSource as PropertyNodeItem;
-                firstNode = firstNode.GetChildByName(hardware.Name);
+                if (hardwareNodes[hardware.HardwareType].DataSource is PropertyNodeItem firstNode) firstNode = firstNode.GetChildByName(hardware.Name);
+                else return;
                 foreach (var sensor in hardware.Sensors)
                 {
                     if (firstNode != null)
@@ -185,24 +192,23 @@ namespace CodexLite.Apps
         //     thread.Start();
         // }
 
-        Task Updater()
+        private void Updater()
         {
             SensorInfoUpdater(_hardwareNodes);
-            GpuUpdater(_hardwareNodes, _GpuNodes);
-            return Task.CompletedTask;
+            GpuUpdater(_hardwareNodes, _gpuNodes);
         }
         
         private async void Updater_Tick(object sender, EventArgs e)
         {
-            await Task.Run((Updater));
-
-            // this.Dispatcher.Invoke(DispatcherPriority.Normal, )
+            await Task.Run(Updater);
         }
 
         private DispatcherTimer InitializeTimer()
         {
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 1);
+            DispatcherTimer timer = new DispatcherTimer
+            {
+                Interval = new TimeSpan(0, 0, 2)
+            };
             timer.Tick += Updater_Tick;
             return timer;
         }
@@ -250,7 +256,7 @@ namespace CodexLite.Apps
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is PropertyNodeItem propertyNodeItem && propertyNodeItem.NodeType == NodeType.Title) return TitleDataTemplate;
+            if (item is PropertyNodeItem { NodeType: NodeType.Title }) return TitleDataTemplate;
             return SourceDataTemplate;
         }
     }
@@ -265,19 +271,24 @@ namespace CodexLite.Apps
         public float? InstantValue
         {
             get => _instantValue;
-            set
+            private set
             {
                 _instantValue = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("InstantValue"));
-                }
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("InstantValue"));
             }
         }
 
-        public float? MaxValue { get; set; }
+        private float? _maxValue;
+        public float? MaxValue
+        {
+            get => _maxValue;
+            set 
+            {
+                _maxValue = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MaxValue"));
+            }
+        }
         
-
         public void UpdateValue(float? instantValue)
         {
             InstantValue = instantValue;

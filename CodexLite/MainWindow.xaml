@@ -65,8 +65,8 @@
                                 <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="Background" TargetName="border" Value="#a0cfff"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#a0cfff"/>
                                 <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -107,9 +107,6 @@
                             <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsDefaulted" Value="true">
-                                <Setter Property="BorderBrush" TargetName="border" Value="white"/>
-                            </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background1}"/>
                                 <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border1}"/>
@@ -119,8 +116,8 @@
                                 <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border1}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="white"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="white"/>
+                                <Setter Property="Background" TargetName="border" Value="#a0cfff"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#a0cfff"/>
                                 <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground1}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -163,7 +160,7 @@
                     <Grid Grid.Row="0">
                         <Button Style="{DynamicResource MenuButtonTemplate}" 
                                 Background="Transparent" Height="45" Width="45"
-                                Click="HomeButton_Click">
+                                Click="HomeButton_Click" Name="HomeButton">
                             <Button.Content>
                                 <Image Source="/Assets/home.png" />
                             </Button.Content>
@@ -180,22 +177,22 @@
                         </Grid.RowDefinitions>
 
                         <Button Style="{DynamicResource MenuButtonTemplate}" Grid.Row="1" Background="Transparent"
-                                Click="TodoButton_Click">
+                                Click="TodoButton_Click" Name="TodoButton">
                             <Button.Content>
                                 <Image Source="pack://application:,,,/Assets/todo.png" Stretch="Uniform" Width="25"/>
                             </Button.Content>
                         </Button>
                         <Button Style="{DynamicResource MenuButtonTemplate}" Grid.Row="2" Background="Transparent"
-                                Click="FormatButton_Click">
+                                Click="FormatButton_Click" Name="FormatButton">
                             <Button.Content>
                                 <Image Source="pack://application:,,,/Assets/formate.png" Stretch="Uniform" Width="25"/>
                             </Button.Content>
                         </Button>
-                        <Button Style="{DynamicResource MenuButtonTemplate}" Grid.Row="3" Background="Transparent">
-                            <Button.Content>
-                                <Image Source="pack://application:,,,/Assets/imagehosting.png" Stretch="Uniform" Width="25"/>
-                            </Button.Content>
-                        </Button>
+                        <!-- <Button Style="{DynamicResource MenuButtonTemplate}" Grid.Row="3" Background="Transparent"> -->
+                        <!--     <Button.Content> -->
+                        <!--         <Image Source="pack://application:,,,/Assets/imagehosting.png" Stretch="Uniform" Width="25"/> -->
+                        <!--     </Button.Content> -->
+                        <!-- </Button> -->
                     </Grid>
                 </Grid>
                 <Border Grid.Column="1" Background="Transparent">
@@ -219,10 +216,11 @@
 
                                 <StackPanel Orientation="Horizontal" Width="auto"
                                             HorizontalAlignment="Right">
-                                    <!--图床登录-->
-                                    <Button Style="{DynamicResource TopBarButtonTemplate}">
+                                    <!--Github跳转-->
+                                    <Button Style="{DynamicResource TopBarButtonTemplate}"
+                                            Click="GithubBrowser_OnClick">
                                         <Button.Content>
-                                            <Image Source="/Assets/avatar.png" Style="{StaticResource TopBarImage}"/>
+                                            <Image Source="pack://application:,,,/Assets/github.png" Style="{StaticResource TopBarImage}"/>
                                         </Button.Content>
                                         <Button.Resources>
                                             <Style TargetType="{x:Type Border}">
