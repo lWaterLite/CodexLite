@@ -21,10 +21,12 @@
             
             <Style TargetType="ScrollViewer" BasedOn="{StaticResource ScrollViewer.ListBox}"/>
             
+            <!-- dataConverter -->
             <local:EventStartDateConverter x:Key="EventStartDateConverter"/>
             <local:EventEndDateDisplayConverter x:Key="EventEndDateDisplayConverter"/>
             <local:EventEndDateDatabaseConverter x:Key="EventEndDateDatabaseConverter"/>
             
+            <!-- event border style -->
             <Style TargetType="Border" x:Key="RightCard">
                 <Setter Property="Padding" Value="24 16"/>
                 <Setter Property="Background" Value="White"/>
@@ -36,6 +38,7 @@
                 </Setter>
             </Style>
 
+            <!-- Group ListBoxItem style -->
             <Style TargetType="ListBoxItem" x:Key="GroupListBoxItem">
                 <Setter Property="Height" Value="45"/>
                 <Setter Property="Template">
@@ -61,6 +64,7 @@
                 </Setter>
             </Style>
             
+            <!-- Event ListBoxItem Style -->
             <Style TargetType="ListBoxItem" x:Key="EventListBoxItem">
                 <Setter Property="Height" Value="60"/>
                 <Setter Property="Template">
@@ -148,10 +152,12 @@
                 </Grid>
             </DataTemplate>
             
+            <!-- Event右侧区域伸展动画 -->
             <Storyboard x:Key="RightBorderExtendStoryboard">
                 <DoubleAnimation Storyboard.TargetName="RightBorder" Storyboard.TargetProperty="Width" To="420" Duration="0:0:0.1"/>
             </Storyboard>
             
+            <!-- Event右侧区域缩回动画 -->
             <Storyboard x:Key="RightBorderNarrowStoryboard">
                 <DoubleAnimation Storyboard.TargetName="RightBorder" Storyboard.TargetProperty="Width" To="0" Duration="0:0:0.1"/>
             </Storyboard>
@@ -168,6 +174,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- GroupListBox -->
                 <Grid Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="35"/>
@@ -332,6 +339,7 @@
                     </Grid>
                 </Grid>
 
+                <!-- Event ListBox -->
                 <Border Grid.Column="1" Background="#faf9f8">
                     <Grid Column="1">
                         <Grid.RowDefinitions>
@@ -467,6 +475,7 @@
                     </Grid>
                 </Border>
                 
+                <!-- Event Item -->
                 <Border Grid.Column="2" Background="#faf9f8" Width="0" Padding="24 16 16 16" CornerRadius="0 0 20 0"
                         BorderThickness="1 0 0 0" BorderBrush="#C0C4CC" x:Name="RightBorder">
                     <Grid x:Name="RightGrid">

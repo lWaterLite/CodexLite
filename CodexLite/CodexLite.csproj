@@ -221,9 +221,7 @@
     <Resource Include="Assets\delete.png" />
     <Resource Include="Assets\narrow.png" />
     <Resource Include="Assets\calender.png" />
-    <Content Include="CodexLite.sqlite">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="CodexLite.sqlite" />
     <Resource Include="Assets\stared.png" />
     <Resource Include="Assets\task.png" />
     <Resource Include="Assets\list_item.png" />

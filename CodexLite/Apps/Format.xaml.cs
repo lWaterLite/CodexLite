@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Xml;
 using Newtonsoft.Json;
 using SoftCircuits.JavaScriptFormatter;
@@ -11,9 +10,9 @@ using Formatting = System.Xml.Formatting;
 namespace CodexLite.Apps
 {
     /// <summary>
-    /// Formate.xaml 的交互逻辑
+    /// Format.xaml 的交互逻辑
     /// </summary>
-    public partial class Format : Page
+    public partial class Format
     {
         public Format()
         {
@@ -29,6 +28,9 @@ namespace CodexLite.Apps
             return isValid ? number : 4;
         }
         
+        /// <summary>
+        /// Js格式化，按钮响应事件。
+        /// </summary>
         private void JsFormatting_Click(object sender, RoutedEventArgs e)
         {
             FormatOptions formatOptions = new FormatOptions
@@ -40,25 +42,34 @@ namespace CodexLite.Apps
             JsFormattedTextBox.Text = result;
         }
 
+        /// <summary>
+        /// 清除文本框，按钮响应事件。
+        /// </summary>
         private void JsClear_Click(object sender, RoutedEventArgs e)
         {
             JsOriginTextBox.Clear();
             JsFormattedTextBox.Clear();
         }
 
+        /// <summary>
+        /// 复制格式化后的Js到剪切板，按钮响应事件
+        /// </summary>
         private void JsCopyToClipboard_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 Clipboard.SetText(JsFormattedTextBox.Text);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                Console.WriteLine(exception);
+                //Pass
             }
             
         }
 
+        /// <summary>
+        /// XML格式化，按钮响应事件
+        /// </summary>
         private void XmlFormatting_Click(object sender, RoutedEventArgs e)
         {
             XmlDocument document = new XmlDocument();
@@ -86,24 +97,33 @@ namespace CodexLite.Apps
             memoryStream.Close();
         }
 
+        /// <summary>
+        /// 文本框清除，按钮响应事件
+        /// </summary>
         private void XmlClear_Click(object sender, RoutedEventArgs e)
         {
             XmlOriginTextBox.Clear();
             XmlFormattedTextBox.Clear();
         }
 
+        /// <summary>
+        /// 复制格式化后的XML到剪切板，按钮响应事件
+        /// </summary>
         private void XmlCopyToClipboard_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 Clipboard.SetText(JsFormattedTextBox.Text);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                Console.WriteLine(exception);
+                //Pass
             }
         }
 
+        /// <summary>
+        /// JSON格式化，按钮响应事件
+        /// </summary>
         private void JsonFormatting_Click(object sender, RoutedEventArgs e)
         {
             object obj;
@@ -114,9 +134,8 @@ namespace CodexLite.Apps
                 JsonTextReader jsonTextReader = new JsonTextReader(textReader);
                 obj = jsonSerializer.Deserialize(jsonTextReader);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                Console.WriteLine(exception.ToString());
                 JsonFormattedTextBox.Text = "JSON内容有错误";
                 return;
             }
@@ -135,21 +154,27 @@ namespace CodexLite.Apps
             JsonFormattedTextBox.Text = "JSON内容有错误";
         }
 
+        /// <summary>
+        /// 文本框清除，按钮响应事件
+        /// </summary>
         private void JsonClear_Click(object sender, RoutedEventArgs e)
         {
             JsonOriginTextBox.Clear();
             JsonFormattedTextBox.Clear();
         }
 
+        /// <summary>
+        /// 复制格式化后的JSON到剪切板，按钮响应事件
+        /// </summary>
         private void JsonCopyToClipboard_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 Clipboard.SetText(JsonFormattedTextBox.Text);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                Console.WriteLine(exception);
+                //Pass
             }
         }
     }
