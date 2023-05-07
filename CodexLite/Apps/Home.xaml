@@ -6,22 +6,27 @@
       xmlns:local="clr-namespace:CodexLite.Apps"
       mc:Ignorable="d"
       d:DesignHeight="690" d:DesignWidth="1210"
-      Title="Page1">
+      Title="Home">
 
     <Page.Resources>
+        <!-- 滚动条字典资源引用 -->
         <Style TargetType="ScrollViewer" BasedOn="{StaticResource ScrollViewer.ListBox}" />
+        
+        <!-- 硬件信息标题类型文本框样式 -->
         <Style TargetType="TextBlock" x:Key="TreeViewTitleTextDisplay">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
-
+        
+        <!-- 硬件信息资源类型文本框样式 -->
         <Style TargetType="TextBlock" x:Key="TreeViewSourceDisplay">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
 
+        <!-- treeView中选择项的样式 -->
         <Style TargetType="TreeViewItem" x:Key="TreeViewItem">
             <Setter Property="IsExpanded" Value="True" />
             <Style.Resources>
@@ -32,15 +37,18 @@
             </Style.Resources>
         </Style>
 
-        <local:SensorTypeToUnitsConverter x:Key="SensorTypeToUnitsConverter"></local:SensorTypeToUnitsConverter>
+        <!-- 静态Converter引用，将传感器类型转化成单位 -->
+        <local:SensorTypeToUnitsConverter x:Key="SensorTypeToUnitsConverter"/>
 
+        <!-- TreeView DataTemplate选择器 -->
         <local:NodeTemplateSelector x:Key="NodeTemplateSelector">
+            <!-- 标题类型模板 -->
             <local:NodeTemplateSelector.TitleDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type local:PropertyNodeItem}" ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Path=Name}" Style="{StaticResource TreeViewTitleTextDisplay}" />
                 </HierarchicalDataTemplate>
             </local:NodeTemplateSelector.TitleDataTemplate>
-
+            <!-- 资源类型模板 -->
             <local:NodeTemplateSelector.SourceDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type local:PropertyNodeItem}" ItemsSource="{Binding Children}">
                     <Border Margin="0 1 0 1" x:Name="Border">
@@ -84,6 +92,7 @@
             </local:NodeTemplateSelector.SourceDataTemplate>
         </local:NodeTemplateSelector>
 
+        <!-- 每个展示卡片的border样式 -->
         <Style TargetType="Border" x:Key="InfoCard">
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Background" Value="White" />
@@ -112,6 +121,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <!-- 计算机名称、主板名称展示 -->
             <Border Grid.Row="0">
                 <Grid>
                     <Border Padding="24 8" HorizontalAlignment="Stretch"
@@ -123,6 +133,12 @@
                             </StackPanel>
                         </Border>
                     </Border>
+                    <Canvas>
+                        <Button Canvas.Right="32" Canvas.Top="24" Style="{StaticResource Button.Primary}"
+                                Click="SaveComputerInfo_OnClick">
+                            保存信息
+                        </Button>
+                    </Canvas>
                 </Grid>
             </Border>
 
@@ -134,6 +150,7 @@
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
 
+                    <!-- CPU展示 -->
                     <Border Grid.Column="0" Padding="24 8 24 16">
                         <Border Padding="0 12">
                             <Grid>
@@ -190,6 +207,8 @@
                             </Grid>
                         </Border>
                     </Border>
+                    
+                    <!-- GPU展示 -->
                     <Border Grid.Column="1" Margin="24 8 24 16">
                         <Border Padding="0 12">
                             <Grid>
@@ -246,6 +265,8 @@
                             </Grid>
                         </Border>
                     </Border>
+                    
+                    <!-- RAM和HDD展示 -->
                     <Border Grid.Column="2" Margin="24 8 24 16">
                         <Border Padding="0 12">
                             <Grid>
@@ -254,6 +275,7 @@
                                     <RowDefinition Height="2*" />
                                 </Grid.RowDefinitions>
 
+                                <!-- RAM -->
                                 <Border Grid.Row="0">
                                     <Grid>
                                         <Grid.RowDefinitions>
@@ -309,6 +331,7 @@
                                     </Grid>
                                 </Border>
 
+                                <!-- HDD -->
                                 <Border Grid.Row="1" Margin="0 16 0 0">
                                     <Border>
                                         <Grid>
