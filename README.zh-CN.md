@@ -42,7 +42,7 @@ CodexLite 是一个基于WPF的桌面应用，它包含了监测硬件信息，�
 
 ------
 
-- [ImgLite]([lWaterLite/ImgLite: A self-made image hosting application (github.com)](https://github.com/lWaterLite/ImgLite)) 一个基于Python的自建图床应用。
+- [ImgLite](https://github.com/lWaterLite/ImgLite) 一个基于Python的自建图床应用。
 
 ## 使用许可
 

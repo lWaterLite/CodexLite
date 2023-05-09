@@ -42,7 +42,7 @@ The application requires .net framework, if you haven't installed yet, it will g
 
 ------
 
-- [ImgLite]([lWaterLite/ImgLite: A self-made image hosting application (github.com)](https://github.com/lWaterLite/ImgLite)) A Python-based self-made image hosting.
+- [ImgLite](https://github.com/lWaterLite/ImgLite) A Python-based self-made image hosting.
 
 ## License
 
