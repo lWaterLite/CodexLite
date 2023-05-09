@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:CodexLite"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary x:Key="ResourceDictionary">
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Thems/CLScrollViewer.xaml"/>
                 <ResourceDictionary Source="../Thems/CLButton.xaml"/>
