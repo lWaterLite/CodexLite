@@ -252,11 +252,11 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Column="0">
-                                <Button Width="20" Height="20" Margin="0" 
+                                <Button Width="20" Height="20" Margin="0" Padding="0"
                                         Style="{StaticResource Button.Default}"
                                         Click="InsertNewGroup_OnClick">
                                     <Button.Content>
-                                        <Image Source="pack://application:,,,/Assets/add.png" Stretch="Uniform" Height="20"/>
+                                        <Image Source="pack://application:,,,/Assets/new.png" Stretch="Uniform" Height="20"/>
                                     </Button.Content>
                                 </Button>
                             </Grid>

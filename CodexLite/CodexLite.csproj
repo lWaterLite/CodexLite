@@ -16,7 +16,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
-    <ApplicationIcon>图层 2.ico</ApplicationIcon>
+    <ApplicationIcon>CodexLite.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -199,7 +199,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="图层 2.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -225,6 +224,7 @@
     <Resource Include="Assets\todo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SQLite.Interop.dll" />
     <Resource Include="Assets\github.png" />
     <None Include="Controls\.gitkeep" />
     <Resource Include="Assets\add.png" />
@@ -239,6 +239,8 @@
     <Resource Include="Assets\delete.png" />
     <Resource Include="Assets\narrow.png" />
     <Resource Include="Assets\calender.png" />
+    <Resource Include="Assets\new.png" />
+    <Content Include="CodexLite.ico" />
     <Content Include="CodexLite.sqlite" />
     <Resource Include="Assets\stared.png" />
     <Resource Include="Assets\task.png" />

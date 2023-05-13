@@ -22,7 +22,7 @@ namespace CodexLite.Apps
     public partial class Home
     {
         /// <summary>
-    /// 与UI线程同步的计时器，用于处理硬件信息更新的定时任务，设计为与UI线程同步的方式使其能安全访问UI内的变量。采用Dispatcher自动注入UI线程。
+        /// 与UI线程同步的计时器，用于处理硬件信息更新的定时任务，设计为与UI线程同步的方式使其能安全访问UI内的变量。采用Dispatcher自动注入UI线程。
         /// </summary>
         private static DispatcherTimer _updateTimer;
         /// <summary>

@@ -171,7 +171,7 @@ namespace CodexLite.Apps
         }
 
         /// <summary>
-        /// 添加一个新Group，案件响应事件
+        /// 添加一个新Group，按键响应事件
         /// </summary>
         private void InsertNewGroup_OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -259,7 +259,7 @@ namespace CodexLite.Apps
         }
 
         /// <summary>
-        /// 添加一个新Event，选择改变事件
+        /// 添加一个新Event，按键响应事件
         /// </summary>
         private void InsertNewEvent_OnKeyDown(object sender, KeyEventArgs e)
         {
