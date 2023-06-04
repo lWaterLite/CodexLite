@@ -8,7 +8,7 @@
       Title="Format">
 
     <Page.Resources>
-        <ResourceDictionary Source="/Thems/CLButton.xaml"></ResourceDictionary>
+        <ResourceDictionary Source="/Thems/CLButton.xaml"/>
     </Page.Resources>
     
     <Grid Background="Transparent">

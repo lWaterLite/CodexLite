@@ -134,10 +134,10 @@
         <Style x:Key="TopBarImageMaxAndRestore" TargetType="Image" BasedOn="{StaticResource TopBarImage}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="Maximized">
-                    <Setter Property="Source" Value="/Assets/restore.png"></Setter>
+                    <Setter Property="Source" Value="/Assets/restore.png"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="Normal">
-                    <Setter Property="Source" Value="/Assets/maximize.png"></Setter>
+                    <Setter Property="Source" Value="/Assets/maximize.png"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -162,7 +162,7 @@
                                 Background="Transparent" Height="45" Width="45"
                                 Click="HomeButton_Click" Name="HomeButton">
                             <Button.Content>
-                                <Image Source="/Assets/home.png" />
+                                <Image Source="/Assets/home.png"/>
                             </Button.Content>
                         </Button>
                     </Grid>
@@ -203,7 +203,7 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             
-                            <Border Background="#ecf5ff" CornerRadius="20 20 0 0"></Border>
+                            <Border Background="#ecf5ff" CornerRadius="20 20 0 0"/>
                             <Grid Grid.Row="0">
                                 
                                 <Grid Background="Transparent" MouseLeftButtonDown="TopBarDrag_LeftDown">
@@ -264,12 +264,12 @@
                                                 </Border>
                                                  <ControlTemplate.Triggers> 
                                                      <Trigger Property="IsMouseOver" Value="True"> 
-                                                         <Setter Property="Background" Value="#e81123" TargetName="border"></Setter> 
-                                                         <Setter Property="BorderBrush" Value="#e81123" TargetName="border"></Setter> 
+                                                         <Setter Property="Background" Value="#e81123" TargetName="border"/> 
+                                                         <Setter Property="BorderBrush" Value="#e81123" TargetName="border"/> 
                                                      </Trigger> 
                                                      <Trigger Property="IsPressed" Value="True"> 
-                                                         <Setter Property="Background" Value="#9b0b17" TargetName="border"></Setter> 
-                                                         <Setter Property="BorderBrush" Value="#9b0b17" TargetName="border"></Setter> 
+                                                         <Setter Property="Background" Value="#9b0b17" TargetName="border"/> 
+                                                         <Setter Property="BorderBrush" Value="#9b0b17" TargetName="border"/> 
                                                      </Trigger> 
                                                  </ControlTemplate.Triggers> 
                                             </ControlTemplate>
